@@ -3,36 +3,81 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function ToDoList() {
+  const [todoItem, setTodoItem] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/todos")
+      .then((response) => {
+        setTodoItem(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  // for changing the color of task due to importance and deadline (if near deadline always high importance)
+  const getVariant = (item) => {
+    let variant = ""
+    let date = new Date(item.deadline)
+    let currentDate = new Date()
+    let difference = currentDate - date
+    let dateOffset = 1000 * 60 * 60 * 24 * 3
+    // console.log(`Current date ${currentDate}`)
+    // console.log(`deadline ${date}`)
+    // console.log(`difference ${difference}`)
+    // console.log(`dateOffset ${dateOffset}`)
+
+    if (dateOffset + difference > 0) {
+      return "danger"
+    } 
+
+    if (item.priority === "high") {
+      variant = "danger"
+    } else if (item.priority === "low") {
+      variant = "primary"
+    } else {
+      variant = "warning"
+    };
+
+    return variant;
+  };
+
+
   return (
     <Card className="listCard">
       <Card.Body>
         <ListGroup className="listOfTodos">
-
-          {/* item to render */}
-          <ListGroup.Item action variant="success">
-            <Accordion>
-              <Accordion.Header>
-                Example of an average important task
-              </Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
+          {todoItem.map((item) => {
+            return (
+              <ListGroup.Item action variant={getVariant(item)}>
+                <Accordion>
+                  <Accordion.Header>{item.value}</Accordion.Header>
+                  <Accordion.Body>
+                    <div className="addBtn">
+                      <ButtonGroup>
+                        <Button variant="primary">🖊</Button>
+                        <Button variant="primary">✅</Button>
+                        <Button variant="primary">🗑</Button>
+                      </ButtonGroup>
+                    </div>
+                  </Accordion.Body>
+                </Accordion>
+              </ListGroup.Item>
+            );
+          })}
 
           {/* Hardcoded examples: */}
+          <hr />
           <ListGroup.Item action variant="success">
             <Accordion>
               <Accordion.Header>
-                Example of an average important task
+                Green color
               </Accordion.Header>
               <Accordion.Body>
                 <div className="addBtn">
@@ -48,7 +93,7 @@ export default function ToDoList() {
 
           <ListGroup.Item action variant="secondary">
             <Accordion>
-              <Accordion.Header>This is an overdue task</Accordion.Header>
+              <Accordion.Header>Grey color</Accordion.Header>
               <Accordion.Body>
                 <div className="addBtn">
                   <ButtonGroup>
@@ -60,10 +105,10 @@ export default function ToDoList() {
               </Accordion.Body>
             </Accordion>
           </ListGroup.Item>
-          
+
           <ListGroup.Item action variant="warning">
             <Accordion>
-              <Accordion.Header>Example of an important Todo</Accordion.Header>
+              <Accordion.Header>Yellow color</Accordion.Header>
               <Accordion.Body>
                 <div className="addBtn">
                   <ButtonGroup>
@@ -75,10 +120,10 @@ export default function ToDoList() {
               </Accordion.Body>
             </Accordion>
           </ListGroup.Item>
-         
+
           <ListGroup.Item action variant="primary">
             <Accordion>
-              <Accordion.Header>May do it, does not have to</Accordion.Header>
+              <Accordion.Header>Blue color</Accordion.Header>
               <Accordion.Body>
                 <div className="addBtn">
                   <ButtonGroup>
@@ -93,7 +138,7 @@ export default function ToDoList() {
           <ListGroup.Item action variant="danger">
             <Accordion>
               <Accordion.Header>
-                This task will soon be overdue
+                Red color
               </Accordion.Header>
               <Accordion.Body>
                 <div className="addBtn">
