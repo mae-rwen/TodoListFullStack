@@ -3,8 +3,8 @@ import { Container } from "react-bootstrap";
 import TodoForm from "./components/TodoForm";
 import Header from "./components/Header";
 import ToDoList from "./components/ToDoList";
-import { useEffect, useState } from "react";
-import axios from 'axios'
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 function App() {
 
@@ -21,7 +21,6 @@ function App() {
         console.log(error);
       });
   }, []);
-
 
   return (
     <>

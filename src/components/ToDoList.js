@@ -3,6 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import axios from "axios";
 
 export default function ToDoList({todoItem, setTodoItem}) {
   
@@ -64,6 +65,18 @@ export default function ToDoList({todoItem, setTodoItem}) {
     );
   };
 
+  // listener for the Delete Todo (removes item from the database)
+  const deleteTodo = (id) => async (e) => {
+    await axios.delete(`http://localhost:3001/todos/${id}`);
+    setTodoItem(
+
+      todoItem.filter((oldItem) => {
+        return oldItem.id !== id
+      }
+      )
+    );
+  };
+
 
   return (
     <Card className="listCard">
@@ -83,7 +96,7 @@ export default function ToDoList({todoItem, setTodoItem}) {
                       <ButtonGroup>
                         <Button variant="primary">🖊</Button>
                         <Button variant="primary" onClick={markAsDone(id)}>✅</Button>
-                        <Button variant="primary">🗑</Button>
+                        <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
                       </ButtonGroup>
                     </div>
                   </Accordion.Body>
