@@ -3,24 +3,9 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { useState, useEffect } from "react";
-import axios from "axios";
 
-export default function ToDoList() {
-  const [todoItem, setTodoItem] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/todos")
-      .then((response) => {
-        setTodoItem(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
+export default function ToDoList({todoItem, setTodoItem}) {
+  
   // for changing the color of task due to importance and deadline (if near deadline always high importance)
   const getVariant = (item) => {
     let variant = ""
