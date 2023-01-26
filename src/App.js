@@ -26,8 +26,8 @@ function App() {
     <>
       <Header />
       <Container className="kontenerek">
-        <TodoForm todoItem={todoItem} setTodoItem={setTodoItem}/>
-        <ToDoList todoItem={todoItem} setTodoItem={setTodoItem}/>
+        <TodoForm todoItem={todoItem} setTodoItem={setTodoItem} />
+        <ToDoList todoItem={todoItem} setTodoItem={setTodoItem} />
       </Container>
     </>
   );

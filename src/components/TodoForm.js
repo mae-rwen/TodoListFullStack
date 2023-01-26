@@ -4,17 +4,46 @@ import Form from "react-bootstrap/Form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
+import axios from 'axios'
 
-function TodoForm({todoItem, setTodoItem}) {
-  const [startDate, setStartDate] = useState(new Date());
+function TodoForm({setTodoItem, todoItem}) {
+  const [deadline, setDeadline] = useState(new Date());
+  const [value, setValue] = useState('')
+  const [priority, setPriority] = useState('')
+
+
+  // takes the value of the input and save the state for a todo
+  const saveTodo = e => {
+    setValue(e.target.value)
+  }
+  // takes the value and saves 1
+  const savePriority = e => {
+    setPriority(e.target.value)
+  }
+  // console.log(value)
+  // console.log(priority)
+  // console.log(deadline)
+  // the function on submit
+  const onSubmit = e => {
+    e.preventDefault()
+    setValue('')
+    axios
+    .post('http://localhost:3001/todos', {
+      deadline: deadline,
+      value: value,
+      priority: priority
+    })
+    .then(res => setTodoItem([...todoItem, res.data]))
+    .catch(err => console.log(err))
+  }
 
   return (
     <Card className="formCard">
       <Card.Body>
-        <Form>
-          <Form.Group className="mb-3">
+        <Form onSubmit={onSubmit} action='http://localhost:3001/todos' method='POST'>
+          <Form.Group className="mb-3" >
             <Form.Label>Add your Todo</Form.Label>
-            <Form.Control type="email" placeholder="Name of the task" />
+            <Form.Control type="text" placeholder="Name of the task" onChange={saveTodo} value={value}/>
             <Form.Text className="text-muted">
               This field has to be filled
             </Form.Text>
@@ -23,10 +52,10 @@ function TodoForm({todoItem, setTodoItem}) {
           <div className="priorityAndDate">
             <Form.Group className="mb-3" style={{ width: "50%" }}>
               <Form.Label>Priority</Form.Label>
-              <Form.Select aria-label="Default select example">
-                <option value="1">average</option>
-                <option value="2">high</option>
-                <option value="3">low</option>
+              <Form.Select aria-label="Default select example" onChange={savePriority}>
+                <option value="average">average</option>
+                <option value="high">high</option>
+                <option value="low">low</option>
               </Form.Select>
               <Form.Text className="text-muted">
                 Select the priority level of your task{" "}
@@ -35,7 +64,7 @@ function TodoForm({todoItem, setTodoItem}) {
 
             <Form.Group className="mb-3" style={{ width: "50%" }}>
               <Form.Label>Deadline</Form.Label>
-              <DatePicker className="form-control" selected={startDate} onChange={(date) => setStartDate(date)}/>
+              <DatePicker className="form-control" selected={deadline} onChange={(date) => setDeadline(date)}/>
               <Form.Text className="text-muted">
                 Select the deadline for the task
               </Form.Text>

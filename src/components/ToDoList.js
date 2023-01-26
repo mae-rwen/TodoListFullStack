@@ -7,7 +7,6 @@ import axios from "axios";
 
 export default function ToDoList({todoItem, setTodoItem}) {
   
-
   // for changing the color of task due to importance and deadline (if near deadline always high importance)
   const getVariant = (item) => {
     let variant = ""
