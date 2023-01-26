@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 
-function TodoForm() {
+function TodoForm({todoItem, setTodoItem}) {
   const [startDate, setStartDate] = useState(new Date());
 
   return (

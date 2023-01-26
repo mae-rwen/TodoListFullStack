@@ -3,23 +3,10 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ToDoList() {
-  const [todoItem, setTodoItem] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/todos")
-      .then((response) => {
-        setTodoItem(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
+export default function ToDoList({todoItem, setTodoItem}) {
+  
 
   // for changing the color of task due to importance and deadline (if near deadline always high importance)
   const getVariant = (item) => {
@@ -79,6 +66,18 @@ export default function ToDoList() {
     );
   };
 
+  // listener for the Delete Todo (removes item from the database)
+  const deleteTodo = (id) => async (e) => {
+    await axios.delete(`http://localhost:3001/todos/${id}`);
+    setTodoItem(
+
+      todoItem.filter((oldItem) => {
+        return oldItem.id !== id
+      }
+      )
+    );
+  };
+
 
   return (
     <Card className="listCard">
@@ -98,7 +97,7 @@ export default function ToDoList() {
                       <ButtonGroup>
                         <Button variant="primary">🖊</Button>
                         <Button variant="primary" onClick={markAsDone(id)}>✅</Button>
-                        <Button variant="primary">🗑</Button>
+                        <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
                       </ButtonGroup>
                     </div>
                   </Accordion.Body>
