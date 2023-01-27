@@ -62,6 +62,23 @@ export default function ToDoList({ todoItem, setTodoItem }) {
     );
   };
 
+  // listener for the Undo Button (changes the status of Todo)
+  const undo = (id) => async (e) => {
+    await axios.put(`http://localhost:3001/todos/${id}`, { status: "done" });
+    setTodoItem(
+      todoItem.map((oldItem) => {
+        if (id === oldItem.id) {
+          return {
+            ...oldItem,
+            status: "pending",
+          };
+        } else {
+          return oldItem;
+        }
+      })
+    );
+  };
+
   // listener for the Delete Todo (removes item from the database)
   const deleteTodo = (id) => async (e) => {
     await axios.delete(`http://localhost:3001/todos/${id}`);
@@ -80,77 +97,56 @@ export default function ToDoList({ todoItem, setTodoItem }) {
             const formattedDate = new Date(item.deadline).toLocaleDateString();
             const id = item.id;
 
-            return (
-              <ListGroup.Item action variant={getVariant(item)}>
-                <Accordion>
-                  <Accordion.Header>
-                    {item.value} || deadline: {formattedDate}{" "}
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <div className="addBtn">
-                      <ButtonGroup>
-                        <Button variant="primary">🖊</Button>
-                        <Button variant="primary" onClick={markAsDone(id)}>
-                          ✅
-                        </Button>
-                        <Button variant="primary" onClick={deleteTodo(id)}>
-                          🗑
-                        </Button>
-                      </ButtonGroup>
-                    </div>
-                  </Accordion.Body>
-                </Accordion>
-              </ListGroup.Item>
-            );
+            if (item.status !== "done") {
+              return (
+                <ListGroup.Item action variant={getVariant(item)}>
+                  <Accordion>
+                    <Accordion.Header>
+                      {item.value} || deadline: {formattedDate}
+                    </Accordion.Header>
+                    <Accordion.Body>
+                      <div className="addBtn">
+                        <ButtonGroup>
+                          <Button variant="primary">🖊</Button>
+                          <Button variant="primary" onClick={markAsDone(id)}>
+                            ✅
+                          </Button>
+                          <Button variant="primary" onClick={deleteTodo(id)}>
+                            🗑
+                          </Button>
+                        </ButtonGroup>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion>
+                </ListGroup.Item>
+              );
+            }
           })}
         </ListGroup>
 
-        {/* Hardcoded examples: */}
         <ListGroup className="listOfDone">
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>A task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
+          {todoItem.map((item) => {
+            const id = item.id;
 
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>Another task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>Yet another task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
+            if (item.status === "done") {
+              return (
+                <ListGroup.Item action variant={getVariant(item)}>
+                  <Accordion>
+                    <Accordion.Header>{item.value}</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="addBtn">
+                        <ButtonGroup>
+                          <Button variant="primary">🖊</Button>
+                          <Button variant="primary" onClick={undo(id)}>✖</Button>
+                          <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
+                        </ButtonGroup>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion>
+                </ListGroup.Item>
+              );
+            }
+          })}
         </ListGroup>
       </Card.Body>
     </Card>

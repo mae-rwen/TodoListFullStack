@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import ToDoList from "./components/ToDoList";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import pantera from "./Pink_Panther.png"
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
       <Header />
       <Container className="kontenerek">
         <TodoForm todoItem={todoItem} setTodoItem={setTodoItem} />
+        <div className="pantera"><img src={pantera} alt="todotodo" /></div>
         <ToDoList todoItem={todoItem} setTodoItem={setTodoItem} />
       </Container>
     </>
