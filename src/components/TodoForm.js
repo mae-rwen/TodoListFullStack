@@ -43,7 +43,7 @@ function TodoForm({setTodoItem, todoItem}) {
         <Form onSubmit={onSubmit} action='http://localhost:3001/todos' method='POST'>
           <Form.Group className="mb-3" >
             <Form.Label>Add your Todo</Form.Label>
-            <Form.Control type="text" placeholder="Name of the task" onChange={saveTodo} value={value}/>
+            <Form.Control type="text" placeholder="Name of the task" onChange={saveTodo} value={value} required/>
             <Form.Text className="text-muted">
               This field has to be filled
             </Form.Text>
