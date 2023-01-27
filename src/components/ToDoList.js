@@ -64,7 +64,7 @@ export default function ToDoList({ todoItem, setTodoItem }) {
 
   // listener for the Undo Button (changes the status of Todo)
   const undo = (id) => async (e) => {
-    await axios.put(`http://localhost:3001/todos/${id}`, { status: "done" });
+    await axios.put(`http://localhost:3001/todos/${id}`, { status: "pending" });
     setTodoItem(
       todoItem.map((oldItem) => {
         if (id === oldItem.id) {
@@ -136,7 +136,6 @@ export default function ToDoList({ todoItem, setTodoItem }) {
                     <Accordion.Body>
                       <div className="addBtn">
                         <ButtonGroup>
-                          <Button variant="primary">🖊</Button>
                           <Button variant="primary" onClick={undo(id)}>✖</Button>
                           <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
                         </ButtonGroup>
