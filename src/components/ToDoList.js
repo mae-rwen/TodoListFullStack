@@ -11,18 +11,6 @@ export default function ToDoList({ setTodoItem, todoItem }) {
   const [todoEditing, setTodoEditing] = useState(null);
   const [editText, setEditText] = useState("");
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/todos")
-      .then((response) => {
-        setTodoItem(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
   // for changing the color of task due to importance and deadline (if near deadline always high importance)
   const getVariant = (item) => {
     let variant = "";
@@ -99,13 +87,9 @@ export default function ToDoList({ setTodoItem, todoItem }) {
   //   setTodoEditing(false);
   // }
 
-  const handleChanges = (e) => {
-    setEditText(editText);
-    setTodoEditing(false);
-  };
-
-  const handleUpdateTodo = (id) => async (e) => {
-    e.preventDefault();
+  const handleChanges = (id) => async (e) => {
+    // setEditText(editText);
+    setTodoEditing(null);
     await axios.put(`http://localhost:3001/todos/${id}`, {
       value: editText,
     });
@@ -115,7 +99,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
         if (id === changedItem.id) {
           return {
             ...changedItem,
-            value: e.target.value,
+            value: editText,
             // text: e.target.value,
           };
         } else {
@@ -123,6 +107,11 @@ export default function ToDoList({ setTodoItem, todoItem }) {
         }
       })
     );
+  };
+
+  const handleUpdateEditText = async (e) => {
+    e.preventDefault();
+    setEditText(e.target.value);
   };
 
   return (
@@ -137,11 +126,11 @@ export default function ToDoList({ setTodoItem, todoItem }) {
               <ListGroup.Item action variant={getVariant(item)}>
                 <Accordion>
                   {todoEditing === id ? (
-                    <Form onSubmit={handleChanges}>
+                    <Form onSubmit={handleChanges(id)}>
                       <Form.Control
                         type="text"
-                        onChange={handleUpdateTodo(id)}
-                        value={editText.text}
+                        onChange={handleUpdateEditText}
+                        value={editText}
                         placeholder={item.value}
                       />
                       <Form.Text className="text-muted">
@@ -165,7 +154,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
                               Update
                             </Button>
                             <Button
-                              onClick={() => setTodoEditing(false)}
+                              onClick={() => setTodoEditing(null)}
                               variant="primary"
                             >
                               Cancel
@@ -174,7 +163,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
                         ) : (
                           <>
                             <Button
-                              onClick={() => setTodoEditing(id)}
+                              onClick={() => {setTodoEditing(id); setEditText(item.value)}}
                               variant="primary"
                             >
                               🖊
