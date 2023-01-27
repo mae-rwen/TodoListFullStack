@@ -141,7 +141,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
 
             if (item.status !== "done") {
             return (
-              <ListGroup.Item action variant={getVariant(item)}>
+              <ListGroup.Item action variant={getVariant(item)} key={item.id} as="div">
                 <Accordion>
                   {todoEditing === id ? (
                     <Form onSubmit={handleChanges(id)}>
@@ -198,13 +198,14 @@ export default function ToDoList({ setTodoItem, todoItem }) {
             );
             }
           })}
+        </ListGroup>
         <ListGroup className="listOfDone">
           {todoItem.map((item) => {
             const id = item.id;
 
             if (item.status === "done") {
               return (
-                <ListGroup.Item action variant={getVariant(item)}>
+                <ListGroup.Item action variant={getVariant(item)} key={id} as="div">
                   <Accordion>
                     <Accordion.Header>{item.value}</Accordion.Header>
                     <Accordion.Body>
