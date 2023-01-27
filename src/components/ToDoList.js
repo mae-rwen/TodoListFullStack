@@ -66,6 +66,23 @@ export default function ToDoList({ setTodoItem, todoItem }) {
     );
   };
 
+  // listener for the Undo Button (changes the status of Todo)
+  const undo = (id) => async (e) => {
+    await axios.put(`http://localhost:3001/todos/${id}`, { status: "pending" });
+    setTodoItem(
+      todoItem.map((oldItem) => {
+        if (id === oldItem.id) {
+          return {
+            ...oldItem,
+            status: "pending",
+          };
+        } else {
+          return oldItem;
+        }
+      })
+    );
+  };
+
   // listener for the Delete Todo (removes item from the database)
   const deleteTodo = (id) => async (e) => {
     await axios.delete(`http://localhost:3001/todos/${id}`);
@@ -122,6 +139,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
             const formattedDate = new Date(item.deadline).toLocaleDateString();
             const id = item.id;
 
+            if (item.status !== "done") {
             return (
               <ListGroup.Item action variant={getVariant(item)}>
                 <Accordion>
@@ -138,7 +156,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
                       </Form.Text>
                     </Form>
                   ) : (
-                    <Accordion.Header>{item.value}</Accordion.Header>
+                    <Accordion.Header>{item.value} || deadline: {formattedDate}</Accordion.Header>
                   )}
 
                   <Accordion.Body>
@@ -178,129 +196,30 @@ export default function ToDoList({ setTodoItem, todoItem }) {
                 </Accordion>
               </ListGroup.Item>
             );
+            }
           })}
-
-          {/* Hardcoded examples: */}
-          <hr />
-          <ListGroup.Item action variant="success">
-            <Accordion>
-              <Accordion.Header>Green color++</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-
-          <ListGroup.Item action variant="secondary">
-            <Accordion>
-              <Accordion.Header>Grey color</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-
-          <ListGroup.Item action variant="warning">
-            <Accordion>
-              <Accordion.Header>Yellow color</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-
-          <ListGroup.Item action variant="primary">
-            <Accordion>
-              <Accordion.Header>Blue color</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-          <ListGroup.Item action variant="danger">
-            <Accordion>
-              <Accordion.Header>Red color</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">✅</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-        </ListGroup>
         <ListGroup className="listOfDone">
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>A task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
+          {todoItem.map((item) => {
+            const id = item.id;
 
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>Another task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
-
-          <ListGroup.Item>
-            <Accordion>
-              <Accordion.Header>Yet another task that is done</Accordion.Header>
-              <Accordion.Body>
-                <div className="addBtn">
-                  <ButtonGroup>
-                    <Button variant="primary">🖊</Button>
-                    <Button variant="primary">❌</Button>
-                    <Button variant="primary">🗑</Button>
-                  </ButtonGroup>
-                </div>
-              </Accordion.Body>
-            </Accordion>
-          </ListGroup.Item>
+            if (item.status === "done") {
+              return (
+                <ListGroup.Item action variant={getVariant(item)}>
+                  <Accordion>
+                    <Accordion.Header>{item.value}</Accordion.Header>
+                    <Accordion.Body>
+                      <div className="addBtn">
+                        <ButtonGroup>
+                          <Button variant="primary" onClick={undo(id)}>✖</Button>
+                          <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
+                        </ButtonGroup>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion>
+                </ListGroup.Item>
+              );
+            }
+          })}
         </ListGroup>
       </Card.Body>
     </Card>
