@@ -198,6 +198,7 @@ export default function ToDoList({ setTodoItem, todoItem }) {
             );
             }
           })}
+          </ListGroup>
         <ListGroup className="listOfDone">
           {todoItem.map((item) => {
             const id = item.id;
