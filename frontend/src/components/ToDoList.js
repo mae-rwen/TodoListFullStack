@@ -3,7 +3,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
 import Accordion from "react-bootstrap/Accordion";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 export default function ToDoList({ setTodoItem, todoItem }) {
@@ -135,77 +135,80 @@ export default function ToDoList({ setTodoItem, todoItem }) {
     <Card className="listCard">
       <Card.Body>
         <ListGroup className="listOfTodos">
-          {todoItem.map((item) => {
+          {todoItem.filter(item => item.status !== "done").map((item) => {
             const formattedDate = new Date(item.deadline).toLocaleDateString();
             const id = item.id;
 
-            if (item.status !== "done") {
-            return (
-              <ListGroup.Item action variant={getVariant(item)}>
-                <Accordion>
-                  {todoEditing === id ? (
-                    <Form onSubmit={handleChanges(id)}>
-                      <Form.Control
-                        type="text"
-                        onChange={handleUpdateEditText}
-                        value={editText}
-                        placeholder={item.value}
-                      />
-                      <Form.Text className="text-muted">
-                        Update your task
-                      </Form.Text>
-                    </Form>
-                  ) : (
-                    <Accordion.Header>{item.value} || deadline: {formattedDate}</Accordion.Header>
-                  )}
+            //if (item.status !== "done") {
+              return (
+                <ListGroup.Item action variant={getVariant(item)} key={item.id} as="div">
+                  <Accordion>
+                    {todoEditing === id ? (
+                      <Form onSubmit={handleChanges(id)}>
+                        <Form.Control
+                          type="text"
+                          onChange={handleUpdateEditText}
+                          value={editText}
+                          placeholder={item.value}
+                        />
+                        <Form.Text className="text-muted">
+                          Update your task
+                        </Form.Text>
+                      </Form>
+                    ) : (
+                      <Accordion.Header>{item.value} || deadline: {formattedDate}</Accordion.Header>
+                    )}
 
-                  <Accordion.Body>
-                    <div className="addBtn">
-                      <ButtonGroup>
-                        {todoEditing === id ? (
-                          <>
-                            <Button
-                              type="submit"
-                              onClick={handleChanges}
-                              // onChange={handleEdit}
-                            >
-                              Update
-                            </Button>
-                            <Button
-                              onClick={() => setTodoEditing(null)}
-                              variant="primary"
-                            >
-                              Cancel
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              onClick={() => {setTodoEditing(id); setEditText(item.value)}}
-                              variant="primary"
-                            >
-                              🖊
-                            </Button>
-                            <Button variant="primary">✅</Button>
-                            <Button variant="primary">🗑</Button>
-                          </>
-                        )}
-                      </ButtonGroup>
-                    </div>
-                  </Accordion.Body>
-                </Accordion>
-              </ListGroup.Item>
-            );
-            }
+                    <Accordion.Body>
+                      <div className="addBtn">
+                        <ButtonGroup>
+                          {todoEditing === id ? (
+                            <>
+                              <Button
+                                type="submit"
+                                onClick={handleChanges}
+                                // onChange={handleEdit}
+                              >
+                                Update
+                              </Button>
+                              <Button
+                                onClick={() => setTodoEditing(null)}
+                                variant="primary"
+                              >
+                                Cancel
+                              </Button>
+                            </>
+                          ) : (
+                            <>
+                              <Button
+                                onClick={() => {setTodoEditing(id); setEditText(item.value)}}
+                                variant="primary"
+                              >
+                                🖊
+                              </Button>
+                              <Button variant="primary" onClick={markAsDone(id)}>✅</Button>
+                              <Button variant="primary" onClick={deleteTodo(id)}>🗑</Button>
+                            </>
+                          )}
+                        </ButtonGroup>
+                      </div>
+                    </Accordion.Body>
+                  </Accordion>
+                </ListGroup.Item>
+              );
+            //}
           })}
+<<<<<<< HEAD:frontend/src/components/ToDoList.js
           </ListGroup>
+=======
+        </ListGroup>
+>>>>>>> ae8656f76c6bf0b8b763084452efbce93543e35c:src/components/ToDoList.js
         <ListGroup className="listOfDone">
-          {todoItem.map((item) => {
+          {todoItem.filter(item => item.status === "done").map((item) => {
             const id = item.id;
 
-            if (item.status === "done") {
               return (
-                <ListGroup.Item action variant={getVariant(item)}>
+                <ListGroup.Item action variant={getVariant(item)} key={id} as="div">
                   <Accordion>
                     <Accordion.Header>{item.value}</Accordion.Header>
                     <Accordion.Body>
@@ -219,7 +222,6 @@ export default function ToDoList({ setTodoItem, todoItem }) {
                   </Accordion>
                 </ListGroup.Item>
               );
-            }
           })}
         </ListGroup>
       </Card.Body>
